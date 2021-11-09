@@ -1,13 +1,5 @@
 #include <ESP8266WiFi.h>
 
-//#include <SoftwareSerial.h>
-//SoftwareSerial softSerial(3,1); // RX, TX
-
-//char mystr[10];
-//int data;
-//char ip;
-char input[10];
-
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 
@@ -18,6 +10,8 @@ char input[10];
 #define MQTT_PORT        1883
 #define MQTT_USERNAME    ""
 #define MQTT_PASSWORD    ""
+
+char input[10];
 
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, MQTT_SERVER, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD);
@@ -56,21 +50,10 @@ void loop() {
       else if (strncmp(message, "rob", 3) == 0) {
         if (Serial.available()) {
           delay(100);
-//          pi_notif.publish("kir");
-          Serial.readBytes(input,7);
+          Serial.readBytes(input,10);
           pi_notif.publish(input);
         }
-
-//        data = Serial.read();
-//        Serial.readBytes(data,7);
-//        pi_notif.publish(data); 
-        
-//        if (Serial.available()){
-//          ip=softSerial.read();
-//          Serial.print(ip);
-//          pi_notif.publish('h');
-//        }
-      }
+      } 
     }
   }
 }
