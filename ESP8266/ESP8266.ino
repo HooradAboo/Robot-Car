@@ -1,7 +1,12 @@
 #include <ESP8266WiFi.h>
-//#include <SoftwareSerial.h>
 
+//#include <SoftwareSerial.h>
 //SoftwareSerial softSerial(3,1); // RX, TX
+
+//char mystr[10];
+//int data;
+//char ip;
+char input[10];
 
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
@@ -17,15 +22,11 @@
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, MQTT_SERVER, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD);
 
-Adafruit_MQTT_Publish pi_notif = Adafruit_MQTT_Publish(&mqtt, MQTT_USERNAME "/pi/notif");         //give rpi notifications
+Adafruit_MQTT_Publish pi_notif = Adafruit_MQTT_Publish(&mqtt, MQTT_USERNAME "/pi/notif");
 
-Adafruit_MQTT_Subscribe esp_lamp = Adafruit_MQTT_Subscribe(&mqtt, MQTT_USERNAME "/esp2/lamp");        // get messages for Lamp
+Adafruit_MQTT_Subscribe esp_lamp = Adafruit_MQTT_Subscribe(&mqtt, MQTT_USERNAME "/esp2/lamp");
 
 void MQTT_connect();
-
-//char mystr[10];
-//int data;
-//char ip;
 
 void setup()
 {
@@ -42,10 +43,6 @@ void setup()
 void loop() {
   MQTT_connect();
 
-//  mySerial.readBytes(mystr,7);
-  
-  
-
   Adafruit_MQTT_Subscribe *subscription;
   while ((subscription = mqtt.readSubscription())) {
     if (subscription == &esp_lamp) {
@@ -57,14 +54,16 @@ void loop() {
         pi_notif.publish("esp_lamp Turned ON");
       }
       else if (strncmp(message, "rob", 3) == 0) {
+        if (Serial.available()) {
+          delay(100);
+//          pi_notif.publish("kir");
+          Serial.readBytes(input,7);
+          pi_notif.publish(input);
+        }
+
 //        data = Serial.read();
 //        Serial.readBytes(data,7);
 //        pi_notif.publish(data); 
-        if (Serial.available()) {
-          delay(100);
-          pi_notif.publish("kir");
-          pi_notif.publish(Serial.read());
-        }
         
 //        if (Serial.available()){
 //          ip=softSerial.read();
